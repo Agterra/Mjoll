@@ -39,9 +39,10 @@
         android:textColor="@android:color/black"
         android:textSize="20dp"
         android:layout_toRightOf="@+id/productCheck"
-        android:layout_marginLeft="20dp"
+        android:layout_marginLeft="70dp"
         android:layout_marginTop="20dp"
-        android:layout_marginBottom="20dp"/>
+        android:layout_marginBottom="20dp"
+        android:layout_alignParentLeft="true"/>
 
     <CheckBox
         android:id="@+id/productCheck"
