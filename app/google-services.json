@@ -1,0 +1,58 @@
+{
+  "project_info": {
+    "project_number": "838423518558",
+    "firebase_url": "https://mjoll-5dd97.firebaseio.com",
+    "project_id": "mjoll-5dd97",
+    "storage_bucket": "mjoll-5dd97.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:838423518558:android:a4f95339fe5d960c",
+        "android_client_info": {
+          "package_name": "fr.company.agterra.mjoll"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "838423518558-924aecdbpph1498q4t4gcto6rrovbhvd.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "fr.company.agterra.mjoll",
+            "certificate_hash": "53f0625fce1fd6b5e8378efc20e1db2acbee18be"
+          }
+        },
+        {
+          "client_id": "838423518558-2u2ahibugl5mg19d73kub9h11aam5aee.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD061vTplcAf0F9fOiy-DOXVtZI-V45SiA"
+        },
+        {
+          "current_key": "AIzaSyDMMVnttHjoS6Ql8Ee810Xcb6QIMw9DDE8"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "838423518558-2u2ahibugl5mg19d73kub9h11aam5aee.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
