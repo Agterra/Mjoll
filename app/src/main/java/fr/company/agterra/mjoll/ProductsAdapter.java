@@ -165,7 +165,5 @@ public class ProductsAdapter extends ArrayAdapter {
 
         super.notifyDataSetChanged();
 
-
-
     }
 }

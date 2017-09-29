@@ -1,10 +1,12 @@
 package fr.company.agterra.mjoll;
 
+import java.io.Serializable;
+
 /**
  * Created by Agterra on 08/09/2017.
  */
 
-public class Item {
+public class Item implements Serializable{
 
     private String name;
 
