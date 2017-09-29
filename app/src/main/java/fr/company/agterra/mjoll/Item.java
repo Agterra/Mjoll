@@ -71,4 +71,29 @@ public class Item implements Serializable{
 
     }
 
+    public void incrementByTen()
+    {
+
+        this.quantity += 10;
+
+    }
+
+    public void decrementByTen()
+    {
+
+        if(this.quantity < 11)
+        {
+
+            this.quantity = 1;
+
+        }
+        else
+        {
+
+            this.quantity -= 10;
+
+        }
+
+    }
+
 }

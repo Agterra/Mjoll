@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.database.DatabaseReference;
 
@@ -131,6 +132,32 @@ public class ProductsAdapter extends ArrayAdapter {
 
         });
 
+        addButton.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+
+                objects.get(position).incrementByTen();
+
+                Map<String, Object> map = new HashMap<String, Object>();
+
+                for (int i = 0; i < objects.size(); i++)
+                {
+
+                    map.put(String.valueOf(i), objects.get(i));
+
+                }
+
+                databaseReference.updateChildren(map);
+
+                notifyDataSetChanged();
+
+                Toast.makeText(getContext(), "Ajout de 10 éléments", Toast.LENGTH_SHORT).show();
+
+                return true;
+
+            }
+        });
+
         Button removeButton = view.findViewById(R.id.removeButton);
 
         removeButton.setOnClickListener(new View.OnClickListener() {
@@ -154,6 +181,31 @@ public class ProductsAdapter extends ArrayAdapter {
 
             }
 
+        });
+
+        removeButton.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+
+                objects.get(position).decrementByTen();
+
+                Map<String, Object> map = new HashMap<String, Object>();
+
+                for (int i = 0; i < objects.size(); i++)
+                {
+
+                    map.put(String.valueOf(i), objects.get(i));
+
+                }
+
+                databaseReference.updateChildren(map);
+
+                notifyDataSetChanged();
+
+                Toast.makeText(getContext(), "Retrait de 10 éléménents", Toast.LENGTH_SHORT).show();
+
+                return false;
+            }
         });
 
         return view;

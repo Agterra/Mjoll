@@ -251,7 +251,7 @@ public class ListActivity extends AppCompatActivity {
 
             System.out.println("Error: " +e.getMessage());
 
-            Toast.makeText(getApplicationContext(), "Error : " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getApplicationContext(), "Error : " + e.getMessage(), Toast.LENGTH_SHORT).show();
 
         }
 
@@ -290,7 +290,7 @@ public class ListActivity extends AppCompatActivity {
 
             System.out.println("Error: " +e.getMessage());
 
-            Toast.makeText(getApplicationContext(), "Error : " + e.getMessage(), Toast.LENGTH_SHORT).show();
+           // Toast.makeText(getApplicationContext(), "Error : " + e.getMessage(), Toast.LENGTH_SHORT).show();
 
         }
     }
