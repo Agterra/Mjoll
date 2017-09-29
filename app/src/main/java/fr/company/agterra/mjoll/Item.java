@@ -12,11 +12,15 @@ public class Item implements Serializable{
 
     private int quantity;
 
+    private TypeItem type;
+
     public Item() {
 
         this.name = "none";
 
         this.quantity = 0;
+
+        this.type = TypeItem.PUBLIC;
 
     }
 
@@ -26,6 +30,8 @@ public class Item implements Serializable{
 
         this.quantity = 1;
 
+        this.type = TypeItem.PUBLIC;
+
     }
 
     public Item(String name, int quantity) {
@@ -33,6 +39,8 @@ public class Item implements Serializable{
         this.name = name;
 
         this.quantity = quantity;
+
+        this.type = TypeItem.PUBLIC;
 
     }
 
@@ -51,6 +59,10 @@ public class Item implements Serializable{
     public void setQuantity(int quantity) {
         this.quantity = quantity;
     }
+
+    public void setType(TypeItem type) {this.type = type;}
+
+    public TypeItem getType() {return this.type;}
 
     public void incrementNumber()
     {

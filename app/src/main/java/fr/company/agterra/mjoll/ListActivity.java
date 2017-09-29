@@ -121,7 +121,11 @@ public class ListActivity extends AppCompatActivity {
                             for (int i = 0; i < products.size(); i++)
                             {
 
-                                map.put(String.valueOf(i), products.get(i));
+                                if(products.get(i).getType() != TypeItem.PRIVE) {
+
+                                    map.put(String.valueOf(i), products.get(i));
+
+                                }
 
                             }
 
@@ -142,6 +146,25 @@ public class ListActivity extends AppCompatActivity {
 
                 });
 
+                builder.setNeutralButton("Ajouter en privé", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int var) {
+
+                        Item item = new Item(nameField.getText().toString());
+
+                        item.setType(TypeItem.PRIVE);
+
+                        products.add(0, item);
+
+                        System.out.println("Item saved");
+
+                        saveItemsFile(products);
+
+                        itemArrayAdapter.notifyDataSetChanged();
+
+                    }
+                });
+
                 builder.show();
 
                 itemArrayAdapter.notifyDataSetChanged();
@@ -159,7 +182,8 @@ public class ListActivity extends AppCompatActivity {
             for (int i = 0; i < products.size(); i++)
             {
 
-                map.put(String.valueOf(i), products.get(i));
+                if(products.get(i).getType() != TypeItem.PRIVE)
+                    map.put(String.valueOf(i), products.get(i));
 
             }
 
@@ -170,7 +194,25 @@ public class ListActivity extends AppCompatActivity {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
 
+                    ArrayList<Item> privateItems = new ArrayList<Item>();
+
+                    for(Item currentItem : products)
+                    {
+
+                        if(currentItem.getType() == TypeItem.PRIVE)
+                        {
+
+                            privateItems.add(currentItem);
+
+                        }
+
+                    }
+
                     products.clear();
+
+                    products.addAll(privateItems);
+
+                    privateItems.clear();
 
                     for (DataSnapshot data : dataSnapshot.getChildren())
                     {
@@ -266,6 +308,10 @@ public class ListActivity extends AppCompatActivity {
         {
 
             File itemsFile = new File(this.getFilesDir(), fileName);
+
+            itemsFile.delete();
+
+            itemsFile = new File(this.getFilesDir(), fileName);
 
             FileOutputStream fileOutputStream = new FileOutputStream(itemsFile);
 

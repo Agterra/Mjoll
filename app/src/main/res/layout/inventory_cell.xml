@@ -32,7 +32,7 @@
         android:layout_toLeftOf="@+id/productNumberTextView"
         android:layout_centerVertical="true"/>
 
-    <TextView
+    <EditText
         android:id="@+id/productNameTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -43,7 +43,8 @@
         android:layout_marginLeft="70dp"
         android:layout_marginTop="20dp"
         android:layout_marginBottom="20dp"
-        android:layout_alignParentLeft="true"/>
+        android:layout_alignParentLeft="true"
+        android:editable="false"/>
 
     <CheckBox
         android:id="@+id/productCheck"
