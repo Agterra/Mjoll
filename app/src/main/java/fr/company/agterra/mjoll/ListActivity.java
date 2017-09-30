@@ -44,13 +44,21 @@ public class ListActivity extends AppCompatActivity {
 
     private ArrayList<Item> products;
 
+    private ArrayList<Item> privateProducts;
+
     private ListView listView;
 
+    private ListView privateListView;
+
     private ArrayAdapter<Item> itemArrayAdapter;
+
+    private ArrayAdapter<Item> privateItemArrayAdapter;
 
     private DatabaseReference databaseReference;
 
     public static String fileName = "itemsFile";
+
+    public static String privateFileName = "privateItemsFile";
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -58,6 +66,8 @@ public class ListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_list);
+
+        //PUBLIC PART
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
 
@@ -142,6 +152,23 @@ public class ListActivity extends AppCompatActivity {
 
                 });
 
+                builder.setNeutralButton("Ajouter en privé", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int var) {
+
+                        Item item = new Item(nameField.getText().toString());
+
+                        privateProducts.add(item);
+
+                        System.out.println("Item saved");
+
+                        savePrivateItemsFile(privateProducts);
+
+                        privateItemArrayAdapter.notifyDataSetChanged();
+
+                    }
+                });
+
                 builder.show();
 
                 itemArrayAdapter.notifyDataSetChanged();
@@ -208,7 +235,27 @@ public class ListActivity extends AppCompatActivity {
 
         }
 
+        //PRIVATE PART
+
+        this.privateProducts = loadPrivateItemsFile();
+
+        if(this.privateProducts == null)
+        {
+
+            this.privateProducts = new ArrayList<>();
+
+        }
+
+        ListView privateListView = (ListView)findViewById(R.id.privateListView);
+
+        this.privateListView = privateListView;
+
+        this.privateItemArrayAdapter = new PrivateProductsAdapter(ListActivity.this, R.layout.inventory_cell, privateProducts);
+
+        this.privateListView.setAdapter(this.privateItemArrayAdapter);
+
     }
+
 
     private ArrayList<Item> loadItemsFile()
     {
@@ -293,6 +340,92 @@ public class ListActivity extends AppCompatActivity {
            // Toast.makeText(getApplicationContext(), "Error : " + e.getMessage(), Toast.LENGTH_SHORT).show();
 
         }
+    }
+
+    private ArrayList<Item> loadPrivateItemsFile()
+    {
+
+        ArrayList<Item> itemsList = new ArrayList<>();
+
+        try
+        {
+
+            File itemsFile = new File(this.getFilesDir(), privateFileName);
+
+            FileInputStream fileInputStream = new FileInputStream(itemsFile);
+
+            ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
+
+            Item currentItem = (Item)objectInputStream.readObject();
+
+            while(currentItem != null)
+            {
+
+                itemsList.add(currentItem);
+
+                currentItem = (Item)objectInputStream.readObject();
+
+                System.out.println("current item: " + currentItem);
+
+            }
+
+            //this.products.addAll(itemsList);
+
+            objectInputStream.close();
+
+            fileInputStream.close();
+
+            System.out.println("----\nItems loaded...\n----");
+
+        }
+        catch (Exception e)
+        {
+
+            System.out.println("Error: " +e.getMessage());
+
+            //Toast.makeText(getApplicationContext(), "Error : " + e.getMessage(), Toast.LENGTH_SHORT).show();
+
+        }
+
+        return itemsList;
+
+    }
+
+    private void savePrivateItemsFile(ArrayList<Item> objects)
+    {
+
+        try
+        {
+
+            File itemsFile = new File(this.getFilesDir(), privateFileName);
+
+            FileOutputStream fileOutputStream = new FileOutputStream(itemsFile);
+
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
+
+            for(Item currentItem : objects)
+            {
+
+                objectOutputStream.writeObject(currentItem);
+
+            }
+
+            System.out.println("----\nItems saved...\n"+ objects+"\n----");
+
+            objectOutputStream.close();
+
+            fileOutputStream.close();
+
+        }
+        catch (Exception e)
+        {
+
+            System.out.println("Error: " +e.getMessage());
+
+            // Toast.makeText(getApplicationContext(), "Error : " + e.getMessage(), Toast.LENGTH_SHORT).show();
+
+        }
+
     }
 
 }

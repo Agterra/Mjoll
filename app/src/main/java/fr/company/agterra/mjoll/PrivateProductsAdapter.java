@@ -2,13 +2,14 @@ package fr.company.agterra.mjoll;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Color;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
-import android.text.Editable;
 import android.text.InputType;
-import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,10 +21,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.firebase.database.DatabaseReference;
-
-import org.w3c.dom.Text;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -31,26 +28,21 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
- * Created by Agterra on 08/09/2017.
+ * Created by agterra on 30/09/2017.
  */
 
-public class ProductsAdapter extends ArrayAdapter {
+public class PrivateProductsAdapter extends ArrayAdapter {
 
     private ArrayList<Item> objects;
 
-    private DatabaseReference databaseReference;
-
-    public ProductsAdapter(@NonNull Context context, @LayoutRes int resource, ArrayList<Item> objects, DatabaseReference databaseReference) {
+    public PrivateProductsAdapter(@NonNull Context context, @LayoutRes int resource, ArrayList<Item> objects) {
 
         super(context, resource, objects);
 
         this.objects = objects;
-
-        this.databaseReference = databaseReference;
 
     }
 
@@ -74,15 +66,22 @@ public class ProductsAdapter extends ArrayAdapter {
 
         View view = convertView;
 
+        ConnectivityManager connectivityManager = (ConnectivityManager) this.getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        final NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+
         LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         view = inflater.inflate(R.layout.inventory_cell, null);
+
+        view.setBackgroundColor(Color.LTGRAY);
 
         EditText productName = (EditText) view.findViewById(R.id.productNameTextView);
 
         productName.setText(this.objects.get(position).getName());
 
         productName.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View view) {
 
@@ -102,20 +101,9 @@ public class ProductsAdapter extends ArrayAdapter {
 
                         objects.get(position).setName(nameField.getText().toString());
 
-                        saveItemsFile(objects);
+                        savePrivateItemsFile(objects);
 
                         notifyDataSetChanged();
-
-                        Map<String, Object> map = new HashMap<String, Object>();
-
-                        for (int i = 0; i < objects.size(); i++)
-                        {
-
-                            map.put(String.valueOf(i), objects.get(i));
-
-                        }
-
-                        databaseReference.updateChildren(map);
 
                     }
 
@@ -152,20 +140,7 @@ public class ProductsAdapter extends ArrayAdapter {
 
                     objects.remove(position);
 
-                    saveItemsFile(objects);
-
-                    Map<String, Object> map = new HashMap<String, Object>();
-
-                    databaseReference.updateChildren(map);
-
-                    for (int i = 0; i < objects.size(); i++)
-                    {
-
-                        map.put(String.valueOf(i), objects.get(i));
-
-                    }
-
-                    databaseReference.setValue(objects);
+                    savePrivateItemsFile(objects);
 
                     notifyDataSetChanged();
 
@@ -182,18 +157,7 @@ public class ProductsAdapter extends ArrayAdapter {
 
                 objects.get(position).incrementNumber();
 
-                saveItemsFile(objects);
-
-                Map<String, Object> map = new HashMap<String, Object>();
-
-                for (int i = 0; i < objects.size(); i++)
-                {
-
-                    map.put(String.valueOf(i), objects.get(i));
-
-                }
-
-                databaseReference.updateChildren(map);
+                savePrivateItemsFile(objects);
 
                 notifyDataSetChanged();
 
@@ -207,18 +171,7 @@ public class ProductsAdapter extends ArrayAdapter {
 
                 objects.get(position).incrementByTen();
 
-                saveItemsFile(objects);
-
-                Map<String, Object> map = new HashMap<String, Object>();
-
-                for (int i = 0; i < objects.size(); i++)
-                {
-
-                    map.put(String.valueOf(i), objects.get(i));
-
-                }
-
-                databaseReference.updateChildren(map);
+                savePrivateItemsFile(objects);
 
                 notifyDataSetChanged();
 
@@ -237,18 +190,7 @@ public class ProductsAdapter extends ArrayAdapter {
 
                 objects.get(position).decrementNumber();
 
-                saveItemsFile(objects);
-
-                Map<String, Object> map = new HashMap<String, Object>();
-
-                for (int i = 0; i < objects.size(); i++)
-                {
-
-                    map.put(String.valueOf(i), objects.get(i));
-
-                }
-
-                databaseReference.updateChildren(map);
+                savePrivateItemsFile(objects);
 
                 notifyDataSetChanged();
 
@@ -262,18 +204,7 @@ public class ProductsAdapter extends ArrayAdapter {
 
                 objects.get(position).decrementByTen();
 
-                saveItemsFile(objects);
-
-                Map<String, Object> map = new HashMap<String, Object>();
-
-                for (int i = 0; i < objects.size(); i++)
-                {
-
-                    map.put(String.valueOf(i), objects.get(i));
-
-                }
-
-                databaseReference.updateChildren(map);
+                savePrivateItemsFile(objects);
 
                 notifyDataSetChanged();
 
@@ -287,13 +218,13 @@ public class ProductsAdapter extends ArrayAdapter {
 
     }
 
-    private void saveItemsFile(ArrayList<Item> objects)
+    private void savePrivateItemsFile(ArrayList<Item> objects)
     {
 
         try
         {
 
-            File itemsFile = new File(getContext().getFilesDir(), ListActivity.fileName);
+            File itemsFile = new File(this.getContext().getFilesDir(), ListActivity.privateFileName);
 
             FileOutputStream fileOutputStream = new FileOutputStream(itemsFile);
 
@@ -321,12 +252,7 @@ public class ProductsAdapter extends ArrayAdapter {
             // Toast.makeText(getApplicationContext(), "Error : " + e.getMessage(), Toast.LENGTH_SHORT).show();
 
         }
-    }
-
-    @Override
-    public void notifyDataSetChanged() {
-
-        super.notifyDataSetChanged();
 
     }
+
 }
