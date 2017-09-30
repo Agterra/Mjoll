@@ -1,16 +1,10 @@
 package fr.company.agterra.mjoll;
 
 import android.content.Context;
-import android.content.DialogInterface;
-import android.graphics.Color;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AlertDialog;
-import android.text.Editable;
-import android.text.InputType;
 import android.text.Layout;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +12,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -75,10 +68,7 @@ public class ProductsAdapter extends ArrayAdapter {
 
         view = inflater.inflate(R.layout.inventory_cell, null);
 
-        if(objects.get(position).getType() == TypeItem.PRIVE)
-            view.setBackgroundColor(Color.LTGRAY);
-
-        EditText productName = (EditText) view.findViewById(R.id.productNameTextView);
+        TextView productName = (TextView) view.findViewById(R.id.productNameTextView);
 
         productName.setText(this.objects.get(position).getName());
 
@@ -95,34 +85,24 @@ public class ProductsAdapter extends ArrayAdapter {
                 if(b)
                 {
 
-                    if(objects.get(position).getType() != TypeItem.PRIVE) {
+                    objects.remove(position);
 
-                        objects.remove(position);
+                    Map<String, Object> map = new HashMap<String, Object>();
 
-                        Map<String, Object> map = new HashMap<String, Object>();
+                    databaseReference.updateChildren(map);
 
-                        databaseReference.updateChildren(map);
-
-                        for (int i = 0; i < objects.size(); i++) {
-
-                            map.put(String.valueOf(i), objects.get(i));
-
-                        }
-
-                        databaseReference.setValue(objects);
-
-                    }
-                    else
+                    for (int i = 0; i < objects.size(); i++)
                     {
 
-                        objects.remove(position);
-
+                        map.put(String.valueOf(i), objects.get(i));
 
                     }
 
-                }
+                    databaseReference.setValue(objects);
 
-                notifyDataSetChanged();
+                    notifyDataSetChanged();
+
+                }
 
             }
         });
@@ -135,18 +115,16 @@ public class ProductsAdapter extends ArrayAdapter {
 
                 objects.get(position).incrementNumber();
 
-                if(objects.get(position).getType() != TypeItem.PRIVE) {
+                Map<String, Object> map = new HashMap<String, Object>();
 
-                    Map<String, Object> map = new HashMap<String, Object>();
+                for (int i = 0; i < objects.size(); i++)
+                {
 
-                    for (int i = 0; i < objects.size(); i++) {
+                    map.put(String.valueOf(i), objects.get(i));
 
-                        map.put(String.valueOf(i), objects.get(i));
-
-                    }
-
-                    databaseReference.updateChildren(map);
                 }
+
+                databaseReference.updateChildren(map);
 
                 notifyDataSetChanged();
 
@@ -160,19 +138,16 @@ public class ProductsAdapter extends ArrayAdapter {
 
                 objects.get(position).incrementByTen();
 
-                if(objects.get(position).getType() != TypeItem.PRIVE) {
+                Map<String, Object> map = new HashMap<String, Object>();
 
-                    Map<String, Object> map = new HashMap<String, Object>();
+                for (int i = 0; i < objects.size(); i++)
+                {
 
-                    for (int i = 0; i < objects.size(); i++) {
-
-                        map.put(String.valueOf(i), objects.get(i));
-
-                    }
-
-                    databaseReference.updateChildren(map);
+                    map.put(String.valueOf(i), objects.get(i));
 
                 }
+
+                databaseReference.updateChildren(map);
 
                 notifyDataSetChanged();
 
@@ -191,19 +166,16 @@ public class ProductsAdapter extends ArrayAdapter {
 
                 objects.get(position).decrementNumber();
 
-                if(objects.get(position).getType() != TypeItem.PRIVE) {
+                Map<String, Object> map = new HashMap<String, Object>();
 
-                    Map<String, Object> map = new HashMap<String, Object>();
+                for (int i = 0; i < objects.size(); i++)
+                {
 
-                    for (int i = 0; i < objects.size(); i++) {
-
-                        map.put(String.valueOf(i), objects.get(i));
-
-                    }
-
-                    databaseReference.updateChildren(map);
+                    map.put(String.valueOf(i), objects.get(i));
 
                 }
+
+                databaseReference.updateChildren(map);
 
                 notifyDataSetChanged();
 
@@ -217,79 +189,20 @@ public class ProductsAdapter extends ArrayAdapter {
 
                 objects.get(position).decrementByTen();
 
-                if(objects.get(position).getType() != TypeItem.PRIVE) {
+                Map<String, Object> map = new HashMap<String, Object>();
 
-                    Map<String, Object> map = new HashMap<String, Object>();
+                for (int i = 0; i < objects.size(); i++)
+                {
 
-                    for (int i = 0; i < objects.size(); i++) {
-
-                        map.put(String.valueOf(i), objects.get(i));
-
-                    }
-
-                    databaseReference.updateChildren(map);
+                    map.put(String.valueOf(i), objects.get(i));
 
                 }
+
+                databaseReference.updateChildren(map);
 
                 notifyDataSetChanged();
 
                 Toast.makeText(getContext(), "Retrait de 10 éléménents", Toast.LENGTH_SHORT).show();
-
-                return false;
-            }
-        });
-
-        productName.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-
-                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-
-                builder.setTitle("Nom de l'objet");
-
-                final EditText nameField = new EditText(getContext());
-
-                nameField.setInputType(InputType.TYPE_CLASS_TEXT);
-
-                builder.setView(nameField);
-
-                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                        objects.get(position).setName(nameField.getText().toString());
-
-                        if(objects.get(position).getType() != TypeItem.PRIVE) {
-
-                            Map<String, Object> map = new HashMap<String, Object>();
-
-                            for (int i = 0; i < objects.size(); i++) {
-
-                                map.put(String.valueOf(i), objects.get(i));
-
-                            }
-
-                            databaseReference.updateChildren(map);
-
-                        }
-
-                        notifyDataSetChanged();
-
-                    }
-
-                });
-
-                builder.setNegativeButton("Annuler", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                        dialog.cancel();
-
-                    }
-
-                });
-
-                builder.show();
 
                 return false;
             }
