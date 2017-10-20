@@ -1,13 +1,28 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="fr.company.agterra.mjoll.PrivateListFragmen">
+    tools:context="fr.company.agterra.mjoll.PrivateListFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <Button
+        android:id="@+id/addObject"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:hint="+"
+        android:textColorHint="@android:color/black"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="20dp"
+        android:layout_marginRight="20dp"
+        android:background="@android:color/black"
+        android:backgroundTint="@android:color/white"/>
+
+    <ListView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="wrap_content"
+        android:id="@+id/privateListView"
+        android:dividerHeight="1dp"
+        android:divider="@android:color/black"
+        android:layout_marginBottom="50dp"/>
 
-</FrameLayout>
+</RelativeLayout>

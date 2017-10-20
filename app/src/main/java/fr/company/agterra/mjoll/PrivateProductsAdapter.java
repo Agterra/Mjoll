@@ -224,7 +224,7 @@ public class PrivateProductsAdapter extends ArrayAdapter {
         try
         {
 
-            File itemsFile = new File(this.getContext().getFilesDir(), ListActivity.privateFileName);
+            File itemsFile = new File(this.getContext().getFilesDir(), PrivateListFragment.privateFileName);
 
             FileOutputStream fileOutputStream = new FileOutputStream(itemsFile);
 

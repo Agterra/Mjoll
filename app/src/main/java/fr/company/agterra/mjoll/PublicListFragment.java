@@ -1,108 +1,297 @@
 package fr.company.agterra.mjoll;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ListView;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link PublicListFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link PublicListFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
 public class PublicListFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private ArrayList<Item> products;
 
-    private OnFragmentInteractionListener mListener;
+    private ListView listView;
 
-    public PublicListFragment() {
-        // Required empty public constructor
-    }
+    private ArrayAdapter<Item> itemArrayAdapter;
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment PublicListFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static PublicListFragment newInstance(String param1, String param2) {
-        PublicListFragment fragment = new PublicListFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
+    private DatabaseReference databaseReference;
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
+    public static String fileName = "itemsFile";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_public_list, container, false);
-    }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+    public void onActivityCreated(Bundle savedInstanceState) {
+
+        super.onActivityCreated(savedInstanceState);
+
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+
+        this.databaseReference = database.getReference("Items");
+
+        this.products = loadItemsFile();
+
+        if(this.products == null) {
+
+            this.products = new ArrayList<>();
+
+        }
+
+        ConnectivityManager connectivityManager = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        final NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+
+        Button addButton = (Button) getView().findViewById(R.id.addObject);
+
+        ListView listView = (ListView) getView().findViewById(R.id.listView);
+
+        this.listView = listView;
+
+        this.itemArrayAdapter = new ProductsAdapter(getActivity(), R.layout.inventory_cell, products, databaseReference);
+
+        listView.setAdapter(itemArrayAdapter);
+
+        addButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+                builder.setTitle("Nom de l'objet");
+
+                final EditText nameField = new EditText(getActivity());
+
+                nameField.setInputType(InputType.TYPE_CLASS_TEXT);
+
+                builder.setView(nameField);
+
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        Item item = new Item(nameField.getText().toString());
+
+                        products.add(item);
+
+                        System.out.println("Item saved");
+
+                        saveItemsFile(products);
+
+                        itemArrayAdapter.notifyDataSetChanged();
+
+                        if(networkInfo != null)
+                        {
+
+                            Map<String, Object> map = new HashMap<String, Object>();
+
+                            for (int i = 0; i < products.size(); i++)
+                            {
+
+                                map.put(String.valueOf(i), products.get(i));
+
+                            }
+
+                            databaseReference.updateChildren(map);
+                        }
+
+                    }
+
+                });
+
+                builder.setNegativeButton("Annuler", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        dialog.cancel();
+
+                    }
+
+                });
+
+                builder.show();
+
+                itemArrayAdapter.notifyDataSetChanged();
+
+            }
+        });
+
+        itemArrayAdapter.notifyDataSetChanged();
+
+        if(networkInfo != null)
+        {
+
+            Map<String, Object> map = new HashMap<String, Object>();
+
+            for (int i = 0; i < products.size(); i++)
+            {
+
+                map.put(String.valueOf(i), products.get(i));
+
+            }
+
+            databaseReference.updateChildren(map);
+
+            databaseReference.addValueEventListener(new ValueEventListener() {
+
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+
+                    products.clear();
+
+                    for (DataSnapshot data : dataSnapshot.getChildren())
+                    {
+
+                        Item item = data.getValue(Item.class);
+
+                        products.add(item);
+
+                    }
+
+                    saveItemsFile(products);
+
+                    System.out.println("-----\nData changed: "+ products + "\n------");
+
+                    itemArrayAdapter.notifyDataSetChanged();
+
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                    System.out.println("Error");
+
+                }
+
+            });
+
+        }
+        else
+        {
+
+            loadItemsFile();
+
+            itemArrayAdapter.notifyDataSetChanged();
+
+        }
+
+    }
+    private ArrayList<Item> loadItemsFile()
+    {
+
+        ArrayList<Item> itemsList = new ArrayList<>();
+
+        try
+        {
+
+            File itemsFile = new File(getActivity().getFilesDir(), fileName);
+
+            FileInputStream fileInputStream = new FileInputStream(itemsFile);
+
+            ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
+
+            Item currentItem = (Item)objectInputStream.readObject();
+
+            while(currentItem != null)
+            {
+
+                itemsList.add(currentItem);
+
+                currentItem = (Item)objectInputStream.readObject();
+
+                System.out.println("current item: " + currentItem);
+
+            }
+
+            //this.products.addAll(itemsList);
+
+            objectInputStream.close();
+
+            fileInputStream.close();
+
+            System.out.println("----\nItems loaded...\n----");
+
+        }
+        catch (Exception e)
+        {
+
+            System.out.println("Error: " +e.getMessage());
+
+            //Toast.makeText(getApplicationContext(), "Error : " + e.getMessage(), Toast.LENGTH_SHORT).show();
+
+        }
+
+        return itemsList;
+
+    }
+
+    private void saveItemsFile(ArrayList<Item> objects)
+    {
+
+        try
+        {
+
+            File itemsFile = new File(getActivity().getFilesDir(), fileName);
+
+            FileOutputStream fileOutputStream = new FileOutputStream(itemsFile);
+
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
+
+            for(Item currentItem : objects)
+            {
+
+                objectOutputStream.writeObject(currentItem);
+
+            }
+
+            System.out.println("----\nItems saved...\n"+ objects+"\n----");
+
+            objectOutputStream.close();
+
+            fileOutputStream.close();
+
+        }
+        catch (Exception e)
+        {
+
+            System.out.println("Error: " +e.getMessage());
+
+            // Toast.makeText(getApplicationContext(), "Error : " + e.getMessage(), Toast.LENGTH_SHORT).show();
+
         }
     }
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
-    }
 }

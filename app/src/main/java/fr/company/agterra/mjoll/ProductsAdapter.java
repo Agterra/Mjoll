@@ -293,7 +293,7 @@ public class ProductsAdapter extends ArrayAdapter {
         try
         {
 
-            File itemsFile = new File(getContext().getFilesDir(), ListActivity.fileName);
+            File itemsFile = new File(getContext().getFilesDir(), PublicListFragment.fileName);
 
             FileOutputStream fileOutputStream = new FileOutputStream(itemsFile);
 
