@@ -61,7 +61,7 @@ public class PublicListFragment extends Fragment {
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
 
-        this.databaseReference = database.getReference("Items");
+        this.databaseReference = database.getReference("PublicItems");
 
         this.products = loadItemsFile();
 
@@ -84,6 +84,57 @@ public class PublicListFragment extends Fragment {
         this.itemArrayAdapter = new ProductsAdapter(getActivity(), R.layout.inventory_cell, products, databaseReference);
 
         listView.setAdapter(itemArrayAdapter);
+
+        itemArrayAdapter.notifyDataSetChanged();
+
+        if(networkInfo != null)
+        {
+
+            Map<String, Object> map = new HashMap<String, Object>();
+
+            for (int i = 0; i < products.size(); i++)
+            {
+
+                map.put(String.valueOf(i), products.get(i));
+
+            }
+
+            databaseReference.updateChildren(map);
+
+            databaseReference.addValueEventListener(new ValueEventListener() {
+
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+
+                    products.clear();
+
+                    for (DataSnapshot data : dataSnapshot.getChildren())
+                    {
+
+                        Item item = data.getValue(Item.class);
+
+                        products.add(item);
+
+                    }
+
+                    saveItemsFile(products);
+
+                    System.out.println("-----\nData changed: "+ products + "\n------");
+
+                    itemArrayAdapter.notifyDataSetChanged();
+
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                    System.out.println("Error");
+
+                }
+
+            });
+
+        }
 
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -148,65 +199,6 @@ public class PublicListFragment extends Fragment {
 
             }
         });
-
-        itemArrayAdapter.notifyDataSetChanged();
-
-        if(networkInfo != null)
-        {
-
-            Map<String, Object> map = new HashMap<String, Object>();
-
-            for (int i = 0; i < products.size(); i++)
-            {
-
-                map.put(String.valueOf(i), products.get(i));
-
-            }
-
-            databaseReference.updateChildren(map);
-
-            databaseReference.addValueEventListener(new ValueEventListener() {
-
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-
-                    products.clear();
-
-                    for (DataSnapshot data : dataSnapshot.getChildren())
-                    {
-
-                        Item item = data.getValue(Item.class);
-
-                        products.add(item);
-
-                    }
-
-                    saveItemsFile(products);
-
-                    System.out.println("-----\nData changed: "+ products + "\n------");
-
-                    itemArrayAdapter.notifyDataSetChanged();
-
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                    System.out.println("Error");
-
-                }
-
-            });
-
-        }
-        else
-        {
-
-            loadItemsFile();
-
-            itemArrayAdapter.notifyDataSetChanged();
-
-        }
 
     }
     private ArrayList<Item> loadItemsFile()

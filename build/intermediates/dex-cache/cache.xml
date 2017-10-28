@@ -3,21 +3,21 @@
 
     <item
         is-multidex="true"
-        jar="F:\AndroidProjects\MJOLL\Mjoll\app\build\intermediates\incremental-classes\debug\instant-run-bootstrap.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="26.0.0"
-        sha1="4729c9fa7f42004f40ede1f1a57c306c676b7e2e">
-        <dex dex="F:\AndroidProjects\MJOLL\Mjoll\app\build\intermediates\transforms\dex\debug\folders\1000\10000\instant-run-bootstrap_dd44bd6d7e6ab48a746112ca303cb72df841fccf\classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
-        jar="F:\AndroidProjects\MJOLL\Mjoll\app\build\intermediates\incremental-runtime-classes\debug\instant-run.jar"
+        jar="/Users/agterra/Documents/Boulot/GitHub/Mjoll/app/build/intermediates/incremental-runtime-classes/debug/instant-run.jar"
         jumboMode="true"
         optimize="true"
         revision="26.0.0"
         sha1="3be78ebc2706b2e1fe2f12d5726887a92d6c183b">
-        <dex dex="F:\AndroidProjects\MJOLL\Mjoll\app\build\intermediates\transforms\dex\debug\folders\1000\10000\instant-run_2f93dc4021050362f335843929091532b7e2d17d\classes.dex" />
+        <dex dex="/Users/agterra/Documents/Boulot/GitHub/Mjoll/app/build/intermediates/transforms/dex/debug/folders/1000/10000/instant-run_1b29750712b0591f3712b626d26775b722fa1177/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/agterra/Documents/Boulot/GitHub/Mjoll/app/build/intermediates/incremental-classes/debug/instant-run-bootstrap.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="26.0.0"
+        sha1="b55e2690237e978f35b86ce15441ce19dc9cbc2d">
+        <dex dex="/Users/agterra/Documents/Boulot/GitHub/Mjoll/app/build/intermediates/transforms/dex/debug/folders/1000/10000/instant-run-bootstrap_00f03903eee8f0689e4bbfdfe0570906013160c4/classes.dex" />
     </item>
 
 </items>
