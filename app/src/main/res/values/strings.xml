@@ -8,4 +8,7 @@
     <string name="title_public">Publique</string>
     <string name="title_private">Privée</string>
     <string name="title_groups">Groupes</string>
+    <string name="action_add_item">Ajouter un objet</string>
+    <string name="action_synchronize">Synchronizer</string>
+    <string name="title_activity_main">MainActivity</string>
 </resources>
